@@ -422,7 +422,7 @@
             },
             "gitRepoUrl": {
               "type": "string",
-              "defaultValue": "https://github.com/Azure-Samples/multimodal-rag-code-execution"
+              "defaultValue": "https://github.com/kzkalra/RAGPublic"
             },
             "gitRepoBranch": {
               "type": "string",
