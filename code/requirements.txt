@@ -64,6 +64,7 @@ json_repair
 # chromadb
 chainlit==1.0.502
 mermaid-python
+pydantic==2.10.1
 # pygraphviz
 streamlit>=1.31.1
 # accelerate
