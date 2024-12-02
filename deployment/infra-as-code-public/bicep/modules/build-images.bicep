@@ -1,5 +1,5 @@
 param acrName string // Azure Container Registry Name
-param gitRepoUrl string = 'https://github.com/Azure-Samples/multimodal-rag-code-execution' // Git Repository URL
+param gitRepoUrl string = 'https://github.com/kzkalra/RAGPublic' // Git Repository URL
 param gitRepoBranch string = 'main' // Git Repository Branch
 param imageTag string = 'latest' // Docker Image Tag
 
