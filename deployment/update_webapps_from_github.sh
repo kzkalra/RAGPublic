@@ -20,7 +20,7 @@ fi
 echo "Using Azure Container Registry: $ACR_NAME"
 
 # Clone the repository containing Dockerfiles
-git clone https://github.com/Azure-Samples/multimodal-rag-code-execution repo
+git clone https://github.com/kzkalra/RAGPublic repo
 cd repo
 
 # Define paths to your Dockerfiles
