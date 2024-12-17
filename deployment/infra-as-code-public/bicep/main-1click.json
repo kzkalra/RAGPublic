@@ -2603,7 +2603,8 @@
         "[resourceId('Microsoft.Resources/deployments', 'machine-learing-worksapce')]",
         "[resourceId('Microsoft.Resources/deployments', 'openaiDeploy')]",
         "[resourceId('Microsoft.Resources/deployments', 'storageDeploy')]",
-        "[resourceId('Microsoft.Resources/deployments', 'uami')]"
+        "[resourceId('Microsoft.Resources/deployments', 'uami')]",
+        "[resourceId('Microsoft.Resources/deployments', 'buildImages')]"
       ]
     },
     {
