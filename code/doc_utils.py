@@ -953,7 +953,7 @@ def extract_doc_using_doc_int(ingestion_pipeline_dict):
 
     with open(doc_path, "rb") as f:
         poller = document_intelligence_client.begin_analyze_document(
-            "prebuilt-layout", analyze_request=f, output_content_format=DocumentContentFormat.MARKDOWN, content_type="application/octet-stream"
+            "prebuilt-layout", body=f, output_content_format=DocumentContentFormat.MARKDOWN, content_type="application/octet-stream"
         )
     result: AnalyzeResult = poller.result()
     
