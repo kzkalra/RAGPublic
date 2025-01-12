@@ -266,7 +266,8 @@ if "available_models" not in st.session_state:
 
 number_threads = col2.text_input("Number of threads:", st.session_state.available_models, disabled=True)
 pdf_password = col2.text_input("PDF password:")
-job_runners = api_client.get_job_runners()
+#job_runners = api_client.get_job_runners()
+job_runners = ["Container App Job"]
 job_execution = col2.selectbox("Job Execution:", job_runners)
 uploaded_files = col2.file_uploader("Choose a file(s) :file_folder:", accept_multiple_files=True)
 
