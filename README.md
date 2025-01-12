@@ -15,7 +15,7 @@ Multimodal Document Analysis with RAG and Code Execution: using Text, Images and
 
 1. Click the "Deploy to Azure" button
 
-    [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkzkalra%2FRAGPublic%2Fmain%2Fdeployment%2Finfra-as-code-public%2Fbicep%2Fmain-1click.json)
+    [![Deploy to Azure](https://aka.ms/deploytoazurebutton)](https://portal.azure.com/?feature.customportal=false#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fkzkalra%2FRAGPublic%2FTCUpdates%2Fdeployment%2Finfra-as-code-public%2Fbicep%2Fmain-1click.json)
 
 1. Fill in parameters
 
