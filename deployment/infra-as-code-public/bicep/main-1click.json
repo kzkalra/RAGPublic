@@ -426,7 +426,7 @@
             },
             "gitRepoBranch": {
               "type": "string",
-              "defaultValue": "main"
+              "defaultValue": "TCUpdates"
             },
             "imageTag": {
               "type": "string",
