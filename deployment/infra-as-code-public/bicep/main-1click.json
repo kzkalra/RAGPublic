@@ -1949,6 +1949,9 @@
           },
           "applicationInsightsInstrumentationKey": {
             "value": "[reference(resourceId('Microsoft.Insights/components', format('{0}-appin-{1}', parameters('namePrefix'), variables('uniqueid'))), '2020-02-02').InstrumentationKey]"
+          },
+          "applicationInsightsConnectionString" : {
+            "value": "[reference(resourceId('Microsoft.Insights/components', format('{0}-appin-{1}', parameters('namePrefix'), variables('uniqueid'))), '2020-02-02').connectionString]"
           }
         },
         "template": {
@@ -1981,6 +1984,9 @@
               "type": "string"
             },
             "applicationInsightsInstrumentationKey": {
+              "type": "string"
+            },
+            "applicationInsightsConnectionString": {
               "type": "string"
             },
             "containerRegistry": {
@@ -2054,6 +2060,10 @@
               {
                 "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
                 "value": "[parameters('applicationInsightsInstrumentationKey')]"
+              },
+              {
+                "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
+                "value": "[parameters('applicationInsightsConnectionString')]"
               },
               {
                 "name": "AZURE_OPENAI_API_VERSION",
@@ -2689,6 +2699,9 @@
           },
           "applicationInsightsInstrumentationKey": {
             "value": "[reference(resourceId('Microsoft.Insights/components', format('{0}-appin-{1}', parameters('namePrefix'), variables('uniqueid'))), '2020-02-02').InstrumentationKey]"
+          },
+          "applicationInsightsConnectionString" : {
+            "value": "[reference(resourceId('Microsoft.Insights/components', format('{0}-appin-{1}', parameters('namePrefix'), variables('uniqueid'))), '2020-02-02').connectionString]"
           }
         },
         "template": {
@@ -2721,6 +2734,9 @@
               "type": "string"
             },
             "applicationInsightsInstrumentationKey": {
+              "type": "string"
+            },
+            "applicationInsightsConnectionString": {
               "type": "string"
             },
             "containerRegistryName": {
@@ -2912,6 +2928,7 @@
               "name": "[format('{0}/{1}', variables('chatAppName'), 'appsettings')]",
               "properties": {
                 "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('applicationInsightsInstrumentationKey')]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('applicationInsightsConnectionString')]",
                 "ApplicationInsightsAgent_EXTENSION_VERSION": "~2",
                 "DOCKER_ENABLE_CI": "1",
                 "DOCKER_REGISTRY_SERVER_USERNAME": "[parameters('containerRegistryName')]",
@@ -2929,6 +2946,7 @@
               "name": "[format('{0}/{1}', variables('mainAppName'), 'appsettings')]",
               "properties": {
                 "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('applicationInsightsInstrumentationKey')]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('applicationInsightsConnectionString')]",
                 "ApplicationInsightsAgent_EXTENSION_VERSION": "~2",
                 "DOCKER_ENABLE_CI": "1",
                 "DOCKER_REGISTRY_SERVER_USERNAME": "[parameters('containerRegistryName')]",
@@ -2946,6 +2964,7 @@
               "name": "[format('{0}/{1}', variables('apiAppName'), 'appsettings')]",
               "properties": {
                 "APPINSIGHTS_INSTRUMENTATIONKEY": "[parameters('applicationInsightsInstrumentationKey')]",
+                "APPLICATIONINSIGHTS_CONNECTION_STRING": "[parameters('applicationInsightsConnectionString')]",
                 "ApplicationInsightsAgent_EXTENSION_VERSION": "~2",
                 "DOCKER_REGISTRY_SERVER_USERNAME": "[parameters('containerRegistryName')]",
                 "DOCKER_REGISTRY_SERVER_PASSWORD": "[parameters('containerRegistryPassword')]",
