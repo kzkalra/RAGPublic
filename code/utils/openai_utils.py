@@ -91,10 +91,10 @@ class ChatCompletionAgent:
         self.client = client
 
     @retry(wait=wait_random_exponential(min=1, max=30), stop=stop_after_delay(TENACITY_STOP_AFTER_DELAY), after=after_log(logger, logging.ERROR))
-    def get_chat_completion(self, messages: List[dict], model=AZURE_OPENAI_MODEL, temperature=0.2):
-        logging.debug(f"Calling OpenAI APIs with {len(messages)} messages - Model: {model} - Endpoint: {self.client._base_url}")
+    def get_chat_completion(self, messages: List[dict], model=AZURE_OPENAI_MODEL, client = oai_client, temperature=0.2):
+        logging.debug(f"Calling OpenAI APIs with {len(messages)} messages - Model: {model} - Endpoint: {client._base_url}")
         try:
-            response = self.client.chat.completions.create(model=model, temperature=temperature, messages=messages, timeout=TENACITY_TIMEOUT)
+            response = client.chat.completions.create(model=model, temperature=temperature, messages=messages, timeout=TENACITY_TIMEOUT)
             logging.info(f"Successfully called get_chat_completion with response: {response}")
             return response
         except Exception as e:
@@ -120,7 +120,7 @@ class ChatCompletionAgent:
                 api_version=AZURE_OPENAI_API_VERSION,
             )
         else:
-            client = self.client
+            client = oai_client
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant, who helps the user with their query."},
@@ -140,7 +140,7 @@ class ChatCompletionAgent:
             )
         else:
             logger.debug(f"Using default model")
-            client = self.client
+            client = oai_client
 
         messages = [
             {"role": "system", "content": "You are a helpful assistant, who helps the user with their query. You are designed to output JSON."},
@@ -156,9 +156,9 @@ class EmbeddingAgent:
         self.client = client
 
     @retry(wait=wait_random_exponential(min=1, max=30), stop=stop_after_delay(TENACITY_STOP_AFTER_DELAY), after=after_log(logger, logging.ERROR))
-    def get_embeddings(self, text, embedding_model=AZURE_OPENAI_EMBEDDING_MODEL):
-        logger.info(f"Calling OpenAI Embedding APIs with text: {text} - Model: {embedding_model} - Endpoint: {self.client._base_url}")
-        return self.client.embeddings.create(input=[text], model=embedding_model, timeout=TENACITY_TIMEOUT).data[0].embedding
+    def get_embeddings(self, text, embedding_model=AZURE_OPENAI_EMBEDDING_MODEL, client=oai_emb_client):
+        logger.info(f"Calling OpenAI Embedding APIs with text: {text} - Model: {embedding_model} - Endpoint: {client._base_url}")
+        return client.embeddings.create(input=[text], model=embedding_model, timeout=TENACITY_TIMEOUT).data[0].embedding
 
 class ImageProcessingAgent:
     vision_system_prompt = """You are a helpful assistant that uses its vision capabilities to process images, and answer questions around them. 
