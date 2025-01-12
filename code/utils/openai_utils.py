@@ -293,9 +293,9 @@ class Coordinator:
 
     def handle_request(self, request_type, *args, **kwargs):
         logger.info(f"Handling request: {request_type}")
-        if request_type == "chat_completion":
+        if request_type == "get_chat_completion":
             return self.chat_agent.get_chat_completion(*args, **kwargs)
-        elif request_type == "chat_completion_with_json":
+        elif request_type == "get_chat_completion_with_json":
             return self.chat_agent.get_chat_completion_with_json(*args, **kwargs)
         elif request_type == "ask_LLM":
             return self.chat_agent.ask_LLM(*args, **kwargs)
