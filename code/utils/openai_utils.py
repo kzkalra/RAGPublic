@@ -92,10 +92,15 @@ class ChatCompletionAgent:
 
     @retry(wait=wait_random_exponential(min=1, max=30), stop=stop_after_delay(TENACITY_STOP_AFTER_DELAY), after=after_log(logger, logging.ERROR))
     def get_chat_completion(self, messages: List[dict], model=AZURE_OPENAI_MODEL, temperature=0.2):
-        logger.debug(f"Calling OpenAI APIs with {len(messages)} messages - Model: {model} - Endpoint: {self.client._base_url}")
-        print(f"\nCalling OpenAI APIs with {len(messages)} messages - Model: {model} - Endpoint: {self.client._base_url}\n")
-        return self.client.chat.completions.create(model=model, temperature=temperature, messages=messages, timeout=TENACITY_TIMEOUT)
-
+        logging.debug(f"Calling OpenAI APIs with {len(messages)} messages - Model: {model} - Endpoint: {self.client._base_url}")
+        try:
+            response = self.client.chat.completions.create(model=model, temperature=temperature, messages=messages, timeout=TENACITY_TIMEOUT)
+            logging.info(f"Successfully called get_chat_completion with response: {response}")
+            return response
+        except Exception as e:
+            logging.error(f"Error in get_chat_completion: {str(e)}", exc_info=True)
+            raise
+            
     @retry(wait=wait_random_exponential(min=1, max=30), stop=stop_after_attempt(5), retry_error_callback=lambda e: isinstance(e, requests.exceptions.HTTPError) and e.response.status_code == 429, after=after_log(logger, logging.ERROR))
     def get_chat_completion_with_json(self, messages: List[dict], model=AZURE_OPENAI_MODEL, temperature=0.2):
         try:
