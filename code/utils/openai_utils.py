@@ -301,9 +301,9 @@ class Coordinator:
             return self.chat_agent.ask_LLM(*args, **kwargs)
         elif request_type == "ask_LLM_with_JSON":
             return self.chat_agent.ask_LLM_with_JSON(*args, **kwargs)
-        elif request_type == "embedding":
+        elif request_type == "get_embeddings":
             return self.embedding_agent.get_embeddings(*args, **kwargs)
-        elif request_type == "image_processing":
+        elif request_type == "call_gpt4v":
             return self.image_agent.call_gpt4v(*args, **kwargs)
         else:
             raise ValueError("Unknown request type")
