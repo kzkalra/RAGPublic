@@ -1,6 +1,6 @@
 param acrName string // Azure Container Registry Name
 param gitRepoUrl string = 'https://github.com/kzkalra/RAGPublic' // Git Repository URL
-param gitRepoBranch string = 'main' // Git Repository Branch
+param gitRepoBranch string = 'TCUpdates' // Git Repository Branch
 param imageTag string = 'latest' // Docker Image Tag
 
 resource scriptIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2023-07-31-preview' = {
