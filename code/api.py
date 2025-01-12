@@ -541,12 +541,11 @@ def get_job_status(job_id: str):
         if job_name in job_id:
             client = ContainerAppsAPIClient(credential=DefaultAzureCredential(), subscription_id=AML_SUBSCRIPTION_ID)
             job = client.job_execution(AML_RESOURCE_GROUP, job_name, job_id)
-            job_status = job.additional_properties['properties']['status'] 
-        else:
+            logging.ERROR(f"Nota errorJob: {job}")
+            job_status = job['properties']['status']         else:
             job_status = aml_job.check_job_status_using_run_id(job_id)
-            
-        logging.info(f"Job '{job_id}' status: {job_status}")
-        return job_status
+            logging.info(f"Job '{job_id}' status: {job_status}")
+            return job_status
     except Exception as e:
         logging.error(f"Error getting Job status ID: {str(e)}", exc_info=True)
         raise HTTPException(status_code=500, detail=str(e))
