@@ -5,6 +5,7 @@ param uamiClientId string
 param openAiName string
 param openAiApiKey string
 param applicationInsightsInstrumentationKey string
+param applicationInsightsConnectionString string
 param containerRegistry string = '${prefix}acr${uniqueId}'
 param location string = resourceGroup().location
 param logAnalyticsWorkspaceName string
@@ -43,6 +44,10 @@ var allSettings = [
   {
     name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
     value: applicationInsightsInstrumentationKey
+  }
+  {
+    name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
+    value: applicationInsightsConnectionString
   }
   {
     name: 'AZURE_OPENAI_API_VERSION'
