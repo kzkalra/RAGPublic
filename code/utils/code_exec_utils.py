@@ -7,13 +7,13 @@ from inspect import getsourcefile
 from utils.logc import logc
 from utils.file_utils import read_asset_file, replace_extension
 from utils.text_utils import get_token_count, recover_json, extract_code, extract_chunk_number
-from utils.openai_utils import get_chat_completion
+from utils.openai_utils import Coordinator
 
 exec_path = os.path.dirname(getsourcefile(lambda:0))
 exec_path = ''
 test_project_path = os.path.join(exec_path, "../test_project/")
 default_vector_directory = os.path.join(exec_path, "../doc_ingestion_cases/")
-
+coordinator = Coordinator()
 if os.path.exists("../prompts"):
     prompt_dir = "../prompts"
 elif os.path.exists("./prompts"):
@@ -231,7 +231,7 @@ def try_code_interpreter_for_tables_using_python_exec(assets, query, include_mas
         messages.append({"role": "system", "content": system_prompt})     
         messages.append({"role": "user", "content": user_query})     
 
-        result = get_chat_completion(messages)
+        result = coordinator.handle_request("get_chat_completion",messages)
         answer_codeblock = extract_code(recover_json(result.choices[0].message.content))
         print("Answer Codeblock: ", answer_codeblock)
 
