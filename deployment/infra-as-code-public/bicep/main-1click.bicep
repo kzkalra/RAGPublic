@@ -194,6 +194,7 @@ module aca 'aca.bicep' = if (!useWebApps) {
     logAnalyticsWorkspaceName: logWorkspace.name
     containerRegistry: acr.outputs.containerRegistryName
     applicationInsightsInstrumentationKey: appInsights.properties.InstrumentationKey
+    applicationInsightsConnectionString: listKeys(appInsights.id, '2020-02-02').connectionString
   }
 }
 
@@ -224,6 +225,7 @@ module webapps 'webapp.bicep' = if (useWebApps) {
     containerRegistryName: acr.outputs.containerRegistryName
     containerRegistryPassword: acr.outputs.containerRegistryPassword
     applicationInsightsInstrumentationKey: appInsights.properties.InstrumentationKey
+    applicationInsightsConnectionString: listKeys(appInsights.id, '2020-02-02').connectionString
   }
 }
 
