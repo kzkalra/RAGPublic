@@ -71,12 +71,7 @@ from utils.text_utils import (
     extract_chunk_number, clean_up_text)
 from utils.openai_utils import (
     gpt4_models, 
-    get_chat_completion, 
-    get_chat_completion_with_json, 
-    get_embeddings, 
-    ask_LLM, 
-    ask_LLM_with_JSON, 
-    call_gpt4v)
+    Coordinator)
 from utils.code_exec_utils import (
     execute_python_code_block, 
     try_code_interpreter_for_tables_using_python_exec, 
@@ -84,6 +79,9 @@ from utils.code_exec_utils import (
 from utils.assistants_utils import try_code_interpreter_for_tables_using_assistants_api
 
 # Begin main
+
+# Instantiate the coordinator
+coordinator = Coordinator()
 
 try:
     from docx import Document
@@ -171,7 +169,7 @@ def generate_uuid_from_string(input_string):
 
 def generate_section(section):
     prompt = section_generation_prompt.format(section=section)
-    return ask_LLM(prompt)
+    return coordinator.handle_request("ask_LLM",prompt)
 
 def get_solution_path_components(asset_path: str) -> dict:
     stem = os.path.normpath(asset_path)
@@ -442,14 +440,14 @@ def chunk_markdown_table_with_overlap(md_table, cols = None, n_tokens = 512, ove
 
 def chunk_markdown_table(md_table, model_info, n_tokens = 512, overlap = 128):
     prompt = markdown_extract_header_and_summarize_prompt.format(table=md_table.split('\n')[:100])
-    output = ask_LLM_with_JSON(prompt, model_info = model_info)
+    output = coordinator.handle_request("ask_LLM_with_JSON",prompt, model_info = model_info)
     try:
         outd = recover_json(output)
         cols = outd['columns'].split(',')
         summary = outd['summary_of_the_table']
     except:
         try:
-            output = ask_LLM_with_JSON(prompt, model_info = model_info)
+            output = coordinator.handle_request("ask_LLM_with_JSON",prompt, model_info = model_info)
             outd = recover_json(output)
             cols = outd['columns'].split(',')
             summary = outd['summary_of_the_table']
@@ -1223,7 +1221,7 @@ def harvest_code_from_text(ingestion_pipeline_dict, chunk_dict, model_info = Non
                 api_version= AZURE_OPENAI_API_VERSION,
             )
 
-            result = get_chat_completion(messages, model=model_info['AZURE_OPENAI_MODEL'], client = client)
+            result = coordinator.handle_request("get_chat_completion",messages, model=model_info['AZURE_OPENAI_MODEL'], client = client)
             response = result.choices[0].message.content
             # print(f"Harvested Code from chunk {extract_chunk_number(text_filename)}:", response)
 
@@ -1509,7 +1507,7 @@ def generate_analsysis_with_GPT4(ingestion_pipeline_dict, chunk_dict, model_info
             # prompt_template_tokens = get_token_count(chunk_analysis_template)
             # full_text = limit_token_count(text_summary, limit = (FULL_TEXT_TOKEN_LIMIT - text_tokens - prompt_template_tokens))
             prompt = chunk_analysis_template.format(text_summary=text_summary, text_chunk=text, chunk_number=chunk_number, filename=original_document_filename)
-            analysis = ask_LLM(prompt)
+            analysis = coordinator.handle_request("ask_LLM", prompt)
             write_to_file(analysis, analysis_filename ,"w")
             chunk_dict['analysis_file'] = analysis_filename
             print(f"GPT4 Analysis - Post-Processing: Analysis processed in chunk {chunk_number} using {model_info['AZURE_OPENAI_RESOURCE']}")
@@ -1563,7 +1561,7 @@ def process_text_with_GPT4(ingestion_pipeline_dict, chunk_dict, model_info = Non
             messages.append({"role": "system", "content": "You are a helpful assistant that helps the user by generating high quality code to answer the user's questions."})     
             messages.append({"role": "user", "content": process_extracted_text_prompt.format(text=read_asset_file(text_file)[0], markdown="No Markdown available.")})     
 
-            result = get_chat_completion(messages, model=model_info['AZURE_OPENAI_MODEL'], client = client)     
+            result = coordinator.handle_request("get_chat_completion",messages, model=model_info['AZURE_OPENAI_MODEL'], client = client)   
             response = result.choices[0].message.content
 
             shutil.copyfile(text_file, original_text_filename)
@@ -1757,7 +1755,7 @@ def post_process_chunk_images(ingestion_pipeline_dict, chunk_dict, model_info = 
                 messages = []
                 messages.append({"role": "system", "content": "You are a helpful assistant that helps the user by generating high quality code to answer the user's questions."})     
                 messages.append({"role": "user", "content": process_extracted_text_prompt.format(text=ocr_text, markdown=mrkdwn)})     
-                result = get_chat_completion(messages, model=model_info['AZURE_OPENAI_MODEL'], client = client)     
+                result = coordinator.handle_request("get_chat_completion",messages, model=model_info['AZURE_OPENAI_MODEL'], client = client)  
                 response = result.choices[0].message.content
 
                 text = remove_extracted_text(text) + "\n\n**Extracted Text:**\n" + response
@@ -2311,7 +2309,7 @@ def create_metadata(asset_file, file_id, document_path, document_id, asset_type=
 def generate_tag_list(text, model = AZURE_OPENAI_MODEL, client = oai_client):
     try:
         messages = [{"role":"system", "content":optimize_embeddings_prompt.format(text=text)}]
-        result = get_chat_completion(messages, model=model, client = client) 
+        result = coordinator.handle_request("get_chat_completion",messages, model=model, client = client) 
         return result.choices[0].message.content
     except Exception as e:
         logc("Error generating tag list: ", e)
@@ -2329,7 +2327,7 @@ def generate_document_wide_tags(ingestion_pipeline_dict):
     text = limit_token_count(full_text)
 
     prompt = document_wide_tags.format(text=text)
-    tags = ask_LLM(prompt)
+    tags = coordinator.handle_request("ask_LLM", prompt)
 
     write_to_file(tags, tags_text_file, 'w')
     ingestion_pipeline_dict['document_wide_tags'] = tags
@@ -2348,7 +2346,7 @@ def generate_document_wide_summary(ingestion_pipeline_dict):
     text = limit_token_count(full_text)
 
     prompt = document_wide_summary.format(text=text)
-    summary = ask_LLM(prompt)
+    summary = coordinator.handle_request("ask_LLM",prompt)
 
     write_to_file(summary, summary_text_file, 'w')
     ingestion_pipeline_dict['document_wide_summary'] = summary
@@ -2430,7 +2428,7 @@ def add_asset_to_vec_store(assets, index, asset_file, document_path, document_id
 
     if vector_type == "AISearch":
         metadata['text'] = text
-        metadata['vector'] = get_embeddings(text_for_embeddings)
+        metadata['vector'] = coordinator.handle_request("get_embeddings",text_for_embeddings)
         index.upload_documents([metadata])
 
     return file_id, metadata
@@ -2541,7 +2539,7 @@ def get_asset_explanation_gpt4v(asset_file, document_path, gpt4v_prompt = image_
         prompt_ext = prompt_extension + context_extension.format(previous_chunk = previous_chunk, current_chunk = current_chunk, next_chunk = next_chunk)
     
     try:
-        text, description = call_gpt4v(asset_file, gpt4v_prompt = gpt4v_prompt, prompt_extension = prompt_ext, temperature = temperature, model_info=model_info)
+        text, description = coordinator.handle_request("call_gpt4v",asset_file, gpt4v_prompt = gpt4v_prompt, prompt_extension = prompt_ext, temperature = temperature, model_info=model_info)
     except Exception as e:
         logc(f"get_asset_explanation_gpt4v:: Error generating text for asset: {asset_file}\nError: {e}")
         text = "No results could be extracted or explanation generated due to API errors."
@@ -2619,7 +2617,7 @@ def get_query_entities(query, approx_tag_limit=10, temperature = 0.2):
     messages.append({"role": "system", "content": "You are a helpful assistant, who helps the user generate questions based on the text."})     
     messages.append({"role": "system", "content": query_entities})     
 
-    result = get_chat_completion(messages, temperature=temperature)
+    result = coordinator.handle_request("get_chat_completion",messages, temperature=temperature)
 
     return result.choices[0].message.content
 
@@ -2681,7 +2679,7 @@ def check_if_computation_is_needed(query):
     messages.append({"role": "system", "content": "You are a helpful AI assistant. You help users answer their queries based on the information supplied below."})     
     messages.append({"role": "user", "content": computation_is_needed_prompt.format(query=query)})   
 
-    result = get_chat_completion(messages)
+    result = coordinator.handle_request("get_chat_completion",messages)
     return result.choices[0].message.content
      
 def apply_computation_support(query, assets, computation_approach="AssistantsAPI", conversation_history = [], user_id = None, include_master_py=True, verbose = False):
@@ -2748,7 +2746,7 @@ def generate_search_assets(all_results, limit = 1000, verbose=False):
 
 def detect_intent_of_query(query):
     prompt = detect_intent_prompt.format(query=query, history=get_history_as_string([]))
-    answer = ask_LLM_with_JSON(prompt)
+    answer = coordinator.handle_request("ask_LLM_with_JSON",prompt)
     answer_dict = recover_json(answer)
     print(answer_dict)
     return answer_dict['category']
@@ -2915,7 +2913,7 @@ def search(query, learnings = None, top=7, approx_tag_limit=15, conversation_his
     messages.append({"role": "user", "content": full_search_prompt})     
 
     logc("Search Function Executing...", f"Seach Query Token Count => {get_token_count(full_search_prompt)}")
-    result = get_chat_completion_with_json(messages, temperature=temperature)
+    result = coordinator.handle_request("get_chat_completion_with_json",messages,temperature=temperature)
 
     if verbose: logc("Final Prompt", f"{result.choices[0].message.content}")
 
