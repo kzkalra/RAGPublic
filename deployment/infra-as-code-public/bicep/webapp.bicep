@@ -5,6 +5,7 @@ param uamiClientId string
 param openAiName string
 param openAiApiKey string
 param applicationInsightsInstrumentationKey string
+param applicationInsightsConnectionString string
 param containerRegistryName string
 @secure()
 param containerRegistryPassword string
@@ -153,6 +154,7 @@ resource appsettings 'Microsoft.Web/sites/config@2022-09-01' = {
   parent: webApp
   properties: {
     APPINSIGHTS_INSTRUMENTATIONKEY: applicationInsightsInstrumentationKey
+    APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsightsConnectionString
     ApplicationInsightsAgent_EXTENSION_VERSION: '~2'
     DOCKER_ENABLE_CI: '1'
     DOCKER_REGISTRY_SERVER_USERNAME: containerRegistryName
@@ -168,6 +170,7 @@ resource appsettings2 'Microsoft.Web/sites/config@2022-09-01' = {
   parent: webApp2
   properties: {
     APPINSIGHTS_INSTRUMENTATIONKEY: applicationInsightsInstrumentationKey
+    APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsightsConnectionString
     ApplicationInsightsAgent_EXTENSION_VERSION: '~2'    
     DOCKER_ENABLE_CI: '1'
     DOCKER_REGISTRY_SERVER_USERNAME: containerRegistryName
@@ -182,6 +185,7 @@ resource appsettingsApi 'Microsoft.Web/sites/config@2022-09-01' = {
   parent: webAppApi
   properties: {
     APPINSIGHTS_INSTRUMENTATIONKEY: applicationInsightsInstrumentationKey
+    APPLICATIONINSIGHTS_CONNECTION_STRING: applicationInsightsConnectionString
     ApplicationInsightsAgent_EXTENSION_VERSION: '~2'
     // must be set again since chances are existing might be reset
     DOCKER_REGISTRY_SERVER_USERNAME: containerRegistryName
