@@ -1687,7 +1687,7 @@
               "apiVersion": "2022-04-01",
               "name": "[guid(resourceGroup().id, resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('script-identity-{0}', parameters('uniqueid'))), 'owner')]",
               "properties": {
-                "roleDefinitionId": "[first(filter(list(format('/subscriptions/{0}/providers/Microsoft.Authorization/roleDefinitions', subscription().subscriptionId), '2022-04-01').value, role => role.properties.roleName == 'LOD Owner')).id]",
+                "roleDefinitionId": "[first(filter(list(subscriptionResourceId('Microsoft.Authorization/roleDefinitions'), '2022-04-01').value, role => role.properties.roleName == 'LOD Owner')).id]",
                 "principalType": "ServicePrincipal",
                 "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', format('script-identity-{0}', parameters('uniqueid'))), '2023-07-31-preview').principalId]"
               },
