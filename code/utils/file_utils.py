@@ -106,6 +106,10 @@ def generate_file_sas_full_link(p):
     try:
         p = os.path.normpath(os.path.join(ROOT_PATH_INGESTION, p)).replace("\\", "/")
         logc(f"Generate SAS Token for {p}")
+        # Ensure only one instance of '/data/' is present
+        if '/data/data/' in p:
+            p = p.replace('/data/data/', '/data/')
+            
         if p.startswith('/'): p = p[1:]
         service = ShareFileClient(account_url=f"https://{AZURE_FILE_SHARE_ACCOUNT}.file.core.windows.net", credential=AZURE_FILE_SHARE_KEY, share_name=AZURE_FILE_SHARE_NAME, file_path=p)
 
