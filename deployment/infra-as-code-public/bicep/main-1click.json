@@ -62,26 +62,14 @@
       "metadata": {
         "description": "Location for a new Azure OpenAI resource. Leave openAIName and openAIRGName empty to deploy a new resource."
       }
-    },
-    "skipImageBuild": {
-      "type": "bool",
-      "defaultValue": false,
-      "metadata": {
-        "description": "True to avoid building images from the repo. In this case images must be published via push.ps1 script"
-      }
-    },
-    "useWebApps": {
-      "type": "bool",
-      "defaultValue": false,
-      "metadata": {
-        "description": "True to deploy web apps instead of container apps"
-      }
     }
   },
   "variables": {
     "uniqueid": "[uniqueString(resourceGroup().id)]",
     "di_location": "westeurope",
-    "logWorkspaceName": "[format('log-{0}', variables('uniqueid'))]"
+    "logWorkspaceName": "[format('log-{0}', variables('uniqueid'))]",
+    "useWebApps": false,
+    "skipImageBuild": false
   },
   "resources": [
     {
@@ -392,7 +380,7 @@
       }
     },
     {
-      "condition": "[not(parameters('skipImageBuild'))]",
+      "condition": "[not(variables('skipImageBuild'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "buildImages",
@@ -1868,7 +1856,7 @@
       ]
     },
     {
-      "condition": "[not(parameters('useWebApps'))]",
+      "condition": "[not(variables('useWebApps'))]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "aca",
@@ -1888,7 +1876,7 @@
             "value": "[parameters('namePrefix')]"
           },
           "skipImagePulling": {
-            "value": "[parameters('skipImageBuild')]"
+            "value": "[variables('skipImageBuild')]"
           },
           "uamiId": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'uami'), '2022-09-01').outputs.uamiId.value]"
@@ -2618,7 +2606,7 @@
       ]
     },
     {
-      "condition": "[parameters('useWebApps')]",
+      "condition": "[variables('useWebApps')]",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2022-09-01",
       "name": "webapp",
@@ -3350,11 +3338,11 @@
   "outputs": {
     "chatUrl": {
       "type": "string",
-      "value": "[if(not(parameters('useWebApps')), reference(resourceId('Microsoft.Resources/deployments', 'aca'), '2022-09-01').outputs.chatContainerAppUrl.value, reference(resourceId('Microsoft.Resources/deployments', 'webapp'), '2022-09-01').outputs.chatUrl.value)]"
+      "value": "[if(not(variables('useWebApps')), reference(resourceId('Microsoft.Resources/deployments', 'aca'), '2022-09-01').outputs.chatContainerAppUrl.value, reference(resourceId('Microsoft.Resources/deployments', 'webapp'), '2022-09-01').outputs.chatUrl.value)]"
     },
     "mainUrl": {
       "type": "string",
-      "value": "[if(not(parameters('useWebApps')), reference(resourceId('Microsoft.Resources/deployments', 'aca'), '2022-09-01').outputs.mainContainerAppUrl.value, reference(resourceId('Microsoft.Resources/deployments', 'webapp'), '2022-09-01').outputs.mainUrl.value)]"
+      "value": "[if(not(variables('useWebApps')), reference(resourceId('Microsoft.Resources/deployments', 'aca'), '2022-09-01').outputs.mainContainerAppUrl.value, reference(resourceId('Microsoft.Resources/deployments', 'webapp'), '2022-09-01').outputs.mainUrl.value)]"
     }
   }
 }
